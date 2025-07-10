@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 مَصْهَر الذكريات | أداة دمج المحادثات</title>
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    
+    <!-- Google Fonts (Cairo for Arabic) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --container-bg: rgba(22, 27, 34, 0.8);
+            --primary-glow: #238636;
+            --secondary-glow: #3081f7;
+            --text-main: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-color: #30363d;
+            --border-hover: #8b949e;
+            --success-color: #56d364;
+            --danger-color: #f85149;
+            --font-main: 'Cairo', sans-serif;
+            --radius-lg: 16px;
+            --radius-md: 10px;
+            --transition: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-color);
+            background-image:
+                radial-gradient(circle at 15% 50%, rgba(35, 134, 54, 0.15), transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(48, 129, 247, 0.15), transparent 40%);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .fusion-container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--container-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: 30px 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .app-header h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 8px;
+            color: var(--text-main);
+            text-shadow: 0 0 15px var(--primary-glow);
+        }
+
+        .app-header p {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        #drop-zone {
+            border: 3px dashed var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 40px 20px;
+            cursor: pointer;
+            transition: all var(--transition);
+            margin-bottom: 25px;
+        }
+
+        #drop-zone.drag-over, #drop-zone:hover {
+            border-color: var(--primary-glow);
+            background-color: rgba(35, 134, 54, 0.1);
+            transform: scale(1.02);
+        }
+        
+        #drop-zone i {
+            font-size: 3.5rem;
+            color: var(--primary-glow);
+            margin-bottom: 15px;
+            animation: pulseIcon 2.5s infinite ease-in-out;
+        }
+
+        @keyframes pulseIcon {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        #drop-zone-text {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        #file-list-container {
+            display: none; /* Hidden by default */
+            text-align: right;
+            margin-bottom: 25px;
+        }
+
+        #file-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+
+        #file-list-header h2 {
+            font-size: 1.3rem;
+        }
+
+        #clear-all-btn {
+            background: none;
+            border: none;
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+        #clear-all-btn:hover {
+            transform: scale(1.1);
+        }
+
+        #file-list {
+            list-style: none;
+            max-height: 200px;
+            overflow-y: auto;
+            padding-left: 10px; /* For scrollbar */
+        }
+        
+        #file-list li {
+            background-color: rgba(0,0,0,0.2);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 10px 15px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.4s ease-out forwards;
+        }
+        
+        @keyframes slideIn {
+             from { opacity: 0; transform: translateX(20px); }
+             to { opacity: 1; transform: translateX(0); }
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .file-info span {
+            font-family: monospace; /* Better for filenames */
+            direction: ltr;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .remove-btn:hover {
+            color: var(--danger-color);
+            transform: rotate(15deg);
+        }
+
+        .action-area {
+            margin-top: 20px;
+        }
+
+        #merge-btn {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.4rem;
+            font-weight: 900;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            background: linear-gradient(45deg, var(--primary-glow), var(--success-color));
+            color: #ffffff;
+            transition: all var(--transition);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
+        #merge-btn:not(:disabled):hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(86, 211, 100, 0.3);
+        }
+
+        #merge-btn:disabled {
+            background: var(--border-color);
+            color: var(--text-secondary);
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        #status-display {
+            margin-top: 20px;
+            min-height: 24px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: color var(--transition);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            .fusion-container {
+                padding: 20px;
+            }
+            .app-header h1 {
+                font-size: 2rem;
+            }
+            #drop-zone {
+                padding: 30px 15px;
+            }
+            #merge-btn {
+                font-size: 1.2rem;
+                padding: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="fusion-container">
+        <div class="app-header">
+            <h1>🧪 مَصْهَر الذكريات</h1>
+            <p>ادمج سجلات محادثاتك في مخطوطة واحدة قوية!</p>
+        </div>
+        
+        <!-- The invisible file input -->
+        <input type="file" id="file-input" multiple accept=".json" style="display: none;">
+        
+        <!-- The Drag and Drop Zone -->
+        <div id="drop-zone">
+            <i class="fas fa-atom"></i>
+            <p id="drop-zone-text">اسحب وأفلت ملفات JSON هنا<br>أو انقر للاختيار 👆</p>
+        </div>
+
+        <!-- List of Added Files -->
+        <div id="file-list-container">
+            <div id="file-list-header">
+                <h2>🗂️ ملفات في انتظار الصهر</h2>
+                <button id="clear-all-btn">
+                    <i class="fas fa-broom"></i> مسح الكل
+                </button>
+            </div>
+            <ul id="file-list">
+                <!-- File items will be injected here by JS -->
+            </ul>
+        </div>
+        
+        <!-- Action Area -->
+        <div class="action-area">
+            <button id="merge-btn" disabled>🔥 اصهر الآن!</button>
+            <p id="status-display">أضف ملفين (JSON) على الأقل لبدء الصهر...</p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // --- ⚙️ DOM Elements Cache ---
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const fileListContainer = document.getElementById('file-list-container');
+        const fileList = document.getElementById('file-list');
+        const mergeBtn = document.getElementById('merge-btn');
+        const statusDisplay = document.getElementById('status-display');
+        const clearAllBtn = document.getElementById('clear-all-btn');
+
+        // --- 🧠 Application State ---
+        let fileStore = [];
+
+        // --- 🚀 Event Listeners ---
+        dropZone.addEventListener('click', () => fileInput.click());
+        fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        
+        // Drag & Drop Listeners
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, preventDefaults, false);
+            document.body.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drag-over'), false);
+        });
+
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drag-over'), false);
+        });
+
+        dropZone.addEventListener('drop', (e) => handleFiles(e.dataTransfer.files), false);
+
+        // Button Listeners
+        mergeBtn.addEventListener('click', processAndMergeFiles);
+        clearAllBtn.addEventListener('click', resetApp);
+        fileList.addEventListener('click', handleRemoveFile);
+
+        // --- 🛠️ Core Functions ---
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        function handleFiles(files) {
+            let newFilesAdded = 0;
+            [...files].forEach(file => {
+                if (file.type === 'application/json' && !fileStore.some(f => f.name === file.name)) {
+                    fileStore.push(file);
+                    newFilesAdded++;
+                }
+            });
+
+            if (newFilesAdded > 0) {
+                 updateStatus(`✅ تمت إضافة ${newFilesAdded} ملفات جديدة بنجاح!`, 'success');
+            } else {
+                 updateStatus('⚠️ لم يتم إضافة ملفات جديدة. (ربما مكررة أو ليست JSON)', 'danger');
+            }
+            
+            renderFileList();
+            updateUIState();
+        }
+        
+        function renderFileList() {
+            fileList.innerHTML = '';
+            fileStore.forEach((file, index) => {
+                const li = document.createElement('li');
+                li.innerHTML = `
+                    <div class="file-info">
+                        <i class="fas fa-file-code" style="color: var(--secondary-glow)"></i>
+                        <span>${file.name}</span>
+                    </div>
+                    <button class="remove-btn" data-index="${index}" title="إزالة الملف">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                `;
+                fileList.appendChild(li);
+            });
+        }
+        
+        function handleRemoveFile(e) {
+            const removeButton = e.target.closest('.remove-btn');
+            if(removeButton) {
+                const index = parseInt(removeButton.dataset.index, 10);
+                const fileName = fileStore[index].name;
+                fileStore.splice(index, 1);
+                
+                renderFileList();
+                updateUIState();
+                updateStatus(`🗑️ تم إزالة الملف: ${fileName}`, 'danger');
+            }
+        }
+
+        function updateUIState() {
+            if (fileStore.length > 0) {
+                fileListContainer.style.display = 'block';
+            } else {
+                fileListContainer.style.display = 'none';
+            }
+            
+            if (fileStore.length >= 2) {
+                mergeBtn.disabled = false;
+                if (!mergeBtn.textContent.includes('🔥')) { // To avoid overwriting "جاري الصهر"
+                   updateStatus(`🌟 جاهز لصهر ${fileStore.length} ملفات!`, 'success');
+                }
+            } else {
+                mergeBtn.disabled = true;
+                if(fileStore.length === 1) {
+                    updateStatus('⏳ نحتاج ملفاً آخر على الأقل لإتمام عملية الصهر.', 'info');
+                } else {
+                     updateStatus('أضف ملفين (JSON) على الأقل لبدء الصهر...', 'info');
+                }
+            }
+        }
+        
+        async function processAndMergeFiles() {
+            mergeBtn.disabled = true;
+            mergeBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> جاري الصهر...`;
+            updateStatus('⚗️ مرحلة الانصهار جارية، يرجى الانتظار...', 'info');
+
+            const fileReadPromises = fileStore.map(file => file.text());
+
+            try {
+                const fileContents = await Promise.all(fileReadPromises);
+                let mergedData = [];
+                let failedFiles = [];
+
+                fileContents.forEach((content, index) => {
+                    try {
+                        const data = JSON.parse(content);
+                        if (Array.isArray(data)) {
+                            mergedData = mergedData.concat(data);
+                        } else {
+                            // Handle cases like AI Studio where the data is an object, not an array of convos
+                            // For simplicity, we'll wrap it in an array to merge it.
+                             mergedData.push(data);
+                        }
+                    } catch (error) {
+                        failedFiles.push(fileStore[index].name);
+                    }
+                });
+                
+                if (failedFiles.length > 0) {
+                     updateStatus(`⚠️ تم تخطي ${failedFiles.length} ملفات بسبب خطأ في التنسيق: ${failedFiles.join(', ')}`, 'danger');
+                }
+
+                if (mergedData.length === 0) {
+                    updateStatus('❌ فشل الصهر! لم يتم العثور على بيانات صالحة للدمج.', 'danger');
+                    mergeBtn.innerHTML = '🔥 حاول الصهر مجدداً!';
+                    mergeBtn.disabled = false; // Allow retry
+                    return;
+                }
+
+                downloadMergedFile(mergedData);
+                updateStatus(`🎉 نجاح! تم صهر ${fileStore.length} ملفات بنجاح.`, 'success');
+                
+                // Reset after a successful merge
+                setTimeout(() => {
+                    resetApp();
+                    updateStatus('مستعدون لجولة صهر جديدة!', 'info');
+                }, 2500);
+
+
+            } catch (error) {
+                updateStatus('❌ حدث خطأ فادح أثناء قراءة الملفات!', 'danger');
+                mergeBtn.innerHTML = '🔥 حاول الصهر مجدداً!';
+                updateUIState(); // Re-enable button if possible
+            }
+        }
+        
+        function downloadMergedFile(data) {
+            const jsonString = JSON.stringify(data, null, 2);
+            const blob = new Blob([jsonString], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            const timestamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, "");
+            a.download = `FusedMemories_${timestamp}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function updateStatus(message, type = 'info') {
+            statusDisplay.textContent = message;
+            statusDisplay.style.color = 'var(--text-secondary)';
+            if (type === 'success') statusDisplay.style.color = 'var(--success-color)';
+            if (type === 'danger') statusDisplay.style.color = 'var(--danger-color)';
+        }
+        
+        function resetApp() {
+            fileStore = [];
+            fileInput.value = ''; // Clear file input selection
+            renderFileList();
+            updateUIState();
+            mergeBtn.innerHTML = '🔥 اصهر الآن!';
+            updateStatus('أضف ملفين (JSON) على الأقل لبدء الصهر...', 'info');
+        }
+
+    });
+    </script>
+</body>
+</html>
