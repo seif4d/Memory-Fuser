@@ -1,0 +1,455 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مَصْهَر الذكريات - حوّل الفوضى إلى قوة</title>
+    
+    <!-- Meta Tags for Social Sharing (SEO) -->
+    <meta name="description" content="أداة ويب سحرية لدمج ملفات محادثات JSON المتعددة في ملف واحد منظم. مجانية، آمنة، وتعمل بالكامل في متصفحك.">
+    <meta property="og:title" content="🧪 مَصْهَر الذكريات - حوّل الفوضى إلى قوة">
+    <meta property="og:description" content="أداة ويب سحرية لدمج ملفات محادثات JSON المتعددة في ملف واحد منظم. مجانية، آمنة، وتعمل بالكامل في متصفحك.">
+    <meta property="og:type" content="website">
+    <!--  (مهم!) استبدل هذا الرابط بصورة لعرض التطبيق  -->
+    <meta property="og:image" content="https://i.imgur.com/your-app-preview-image.png"> 
+    <meta property="og:url" content="https://github.com/seif4d/Memory-Fuser">
+
+    <!-- Icons and Fonts -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-dark: #02040a;
+            --primary-accent: #7c3aed; /* Vibrant Purple */
+            --secondary-accent: #22d3ee; /* Bright Cyan */
+            --text-light: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: rgba(124, 58, 237, 0.2);
+            --card-bg: rgba(15, 23, 42, 0.5);
+            --font-main: 'Cairo', sans-serif;
+            --transition-main: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 10% 20%, var(--primary-accent) 0%, transparent 25%),
+                radial-gradient(circle at 90% 80%, var(--secondary-accent) 0%, transparent 25%);
+            background-attachment: fixed;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+
+        /* --- Header & Navigation --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 15px 0;
+            z-index: 1000;
+            transition: background-color 0.3s, box-shadow 0.3s;
+        }
+
+        .main-header.scrolled {
+            background-color: rgba(2, 4, 10, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--text-light);
+            text-decoration: none;
+        }
+        .logo i {
+            color: var(--primary-accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 700;
+            transition: var(--transition-main);
+            padding-bottom: 5px;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-links a:hover {
+            color: var(--text-light);
+            border-bottom-color: var(--primary-accent);
+        }
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            padding-top: 80px;
+            position: relative;
+        }
+
+        .hero-content {
+            animation: fadeInDown 1s ease-out;
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            background: linear-gradient(45deg, var(--text-light), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p.subtitle {
+            font-size: 1.3rem;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 15px 35px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: var(--transition-main);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-primary {
+            background-color: var(--primary-accent);
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+        }
+        .btn-primary:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+        }
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-light);
+            border: 2px solid var(--border-color);
+        }
+        .btn-secondary:hover {
+            background-color: var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+
+        /* --- Animated Demo Section --- */
+        .demo-animation {
+            margin-top: 60px;
+            position: relative;
+            height: 200px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .file-icon {
+            position: absolute;
+            font-size: 3rem;
+            color: var(--text-muted);
+            opacity: 0;
+            animation: file-fly-in 5s infinite ease-in-out;
+        }
+
+        .file-icon:nth-child(1) { animation-delay: 0s; }
+        .file-icon:nth-child(2) { animation-delay: 1s; }
+        .file-icon:nth-child(3) { animation-delay: 2s; }
+
+        .fuser-core {
+            font-size: 4rem;
+            color: var(--primary-accent);
+            z-index: 10;
+            animation: core-pulse 5s infinite ease-in-out;
+        }
+
+        @keyframes file-fly-in {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            10% { opacity: 1; transform: translate(-150px, -50px) scale(1) rotate(-15deg); }
+            30% { opacity: 1; transform: translate(120px, 40px) scale(1) rotate(10deg); }
+            50% { opacity: 1; transform: translate(-100px, 60px) scale(1) rotate(5deg); }
+            70% { opacity: 1; transform: translate(0, 0) scale(1) rotate(0); }
+            80% { opacity: 0; transform: scale(0.5); }
+        }
+
+        @keyframes core-pulse {
+            0%, 70%, 100% { transform: scale(1); filter: drop-shadow(0 0 10px var(--primary-accent)); }
+            80% { transform: scale(1.5); filter: drop-shadow(0 0 30px var(--secondary-accent)); }
+            90% { transform: scale(1); filter: drop-shadow(0 0 10px var(--primary-accent)); }
+        }
+
+        /* --- Features Section --- */
+        .features {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .section-title h2 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+        }
+        .section-title p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 30px;
+            border-radius: 16px;
+            backdrop-filter: blur(5px);
+            transition: var(--transition-main);
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-accent);
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.2);
+        }
+        
+        .feature-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            display: inline-block;
+            background: linear-gradient(45deg, var(--primary-accent), var(--secondary-accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+        .feature-card p {
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* --- How It Works Section --- */
+        .how-it-works {
+            padding: 100px 0;
+            text-align: center;
+        }
+        
+        .how-it-works-img {
+            max-width: 100%;
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            box-shadow: 0 10px 50px rgba(0,0,0,0.3);
+            margin-top: 40px;
+        }
+
+        /* --- Footer --- */
+        .main-footer {
+            padding: 40px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            margin-top: 50px;
+        }
+
+        .footer-content p {
+            margin-bottom: 15px;
+            color: var(--text-muted);
+        }
+
+        .social-links a {
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            margin: 0 15px;
+            transition: var(--transition-main);
+        }
+        .social-links a:hover {
+            color: var(--primary-accent);
+            transform: scale(1.2);
+        }
+
+        /* --- Responsive Adjustments --- */
+        @media (max-width: 992px) {
+            .hero h1 { font-size: 3rem; }
+            .hero p.subtitle { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            .hero p.subtitle { font-size: 1.1rem; }
+            .cta-buttons { flex-direction: column; gap: 15px; }
+            .btn { width: 100%; justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header -->
+    <header class="main-header" id="main-header">
+        <div class="container">
+            <nav>
+                <a href="#" class="logo">🧪 مَصْهَر الذكريات</a>
+                <ul class="nav-links">
+                    <li><a href="#features">الميزات</a></li>
+                    <li><a href="#how-it-works">كيف يعمل</a></li>
+                    <li><a href="https://github.com/seif4d/Memory-Fuser" target="_blank">المصدر</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <main class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>حوّل فوضى الملفات إلى قوة مُنظمة</h1>
+                <p class="subtitle">
+                    هل لديك عشرات من ملفات المحادثات المتناثرة؟ 
+                    "مَصْهَر الذكريات" هو أداتك السحرية لدمجها جميعًا في ملف واحد قوي، بضغطة زر.
+                </p>
+                <div class="cta-buttons">
+                    <a href="merger.html" class="btn btn-primary">
+                        <i class="fa-solid fa-rocket"></i> ابدأ الصهر الآن
+                    </a>
+                    <a href="https://github.com/seif4d/Memory-Fuser" target="_blank" class="btn btn-secondary">
+                        <i class="fa-brands fa-github"></i> اعرض الكود على GitHub
+                    </a>
+                </div>
+
+                <!-- Animation -->
+                <div class="demo-animation">
+                    <i class="fas fa-file-code file-icon"></i>
+                    <i class="fas fa-file-code file-icon"></i>
+                    <i class="fas fa-file-code file-icon"></i>
+                    <i class="fas fa-atom fuser-core"></i>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>لماذا تختار مَصْهَر الذكريات؟</h2>
+                <p>لأنه ليس مجرد أداة، بل هو تجربة. مصمم ليكون بسيطًا، قويًا، ويحترم خصوصيتك تمامًا.</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="icon"><i class="fa-solid fa-shield-halved"></i></span>
+                    <h3>آمن وخاص 100%</h3>
+                    <p>كل عمليات الدمج تحدث داخل متصفحك. لا يتم رفع أي ملفات إلى أي خادم. بياناتك تبقى ملكك دائمًا وأبدًا.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon"><i class="fa-solid fa-wand-magic-sparkles"></i></span>
+                    <h3>سهولة خيالية</h3>
+                    <p>واجهة بسيطة تدعم السحب والإفلات. لا تعقيدات، لا إعدادات، فقط نتيجة فورية. اسحب، ادمج، وحمّل.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="icon"><i class="fa-solid fa-bolt"></i></span>
+                    <h3>سرعة فائقة</h3>
+                    <p>يعمل بقوة JavaScript الحديثة لمعالجة الملفات بسرعة البرق، مهما كان حجمها أو عددها.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- How it works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-title">
+                <h2>شاهد السحر بنفسك!</h2>
+                <p>صورة واحدة تغني عن ألف كلمة. هكذا يبدو "مَصْهَر الذكريات" أثناء العمل.</p>
+            </div>
+            <!-- (مهم!) استبدل هذا الرابط بصورة GIF أو PNG تعرض واجهة التطبيق -->
+            <img src="https://i.imgur.com/your-app-demo-gif.gif" alt="عرض توضيحي لواجهة تطبيق مصهر الذكريات" class="how-it-works-img">
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container footer-content">
+            <p>صُنع بـ ❤️ و ☕ بواسطة [اسمك أو اسم المستخدم الخاص بك]</p>
+            <div class="social-links">
+                <a href="https://github.com/seif4d" target="_blank" title="GitHub"><i class="fa-brands fa-github"></i></a>
+                <a href="https://twitter.com/seif4d" target="_blank" title="Twitter/X"><i class="fa-brands fa-x-twitter"></i></a>
+                <a href="https://linkedin.com/in/seif4d" target="_blank" title="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Simple script for header scroll effect
+        const header = document.getElementById('main-header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+    </script>
+
+</body>
+</html>
