@@ -4,6 +4,7 @@
 
 تطبيق ويب بسيط وأنيق ومستقل (standalone) تم تصميمه بمهمة واحدة في الاعتبار: **دمج عدة ملفات محادثات (JSON) في ملف واحد موحد**. مثالي لدمج صادرات ChatGPT، وDeepSeek، وGoogle AI Studio، أو أي بيانات أخرى بصيغة JSON.
 
+<div align="center"> <img src="ext.png" alt="Logo" width="350"/></div>
 <p align="center">
   <img src="https://img.shields.io/badge/اللغة-HTML5-E34F26?style=for-the-badge&logo=html5" alt="HTML5">
   <img src="https://img.shields.io/badge/التنسيق-CSS3-1572B6?style=for-the-badge&logo=css3" alt="CSS3">
